@@ -1,0 +1,48 @@
+import { useState, useEffect } from 'react'
+import { LoadingButton } from '@mui/lab'
+import { Icon, Stack, FormControl, InputLabel, Select, MenuItem, Typography, TextField} from '@mui/material'
+import ChangeService from '../../services/Changes'
+import { useWizard } from './Context'
+import { Check } from '@mui/icons-material'
+
+export default function StepOne() {
+    const [loading, setloading] = useState(false)
+    const {changes, checked, selected, setSelected, mount, setMount, isAvalaible } = useWizard()
+    
+
+    const relationCurrency = () => {
+        const { currency_from, currency_to, price } = changes.find( change => change.id===selected ) ?? {}
+        if( price ) {
+            const fromPrice = price >= 1 ? 1 : parseFloat(1/price).toFixed(2)
+            const toPrice = price >= 1 ? parseFloat(price).toFixed(2) : 1
+            return `Precio ${fromPrice} ${currency_from} por ${toPrice} ${currency_to}`
+        }
+        return ''
+    }
+
+    const handlerCheck = async () => {
+        setloading(true)
+        await isAvalaible()
+        setloading(false)
+    }
+
+    return <Stack spacing={1} sx={{width:'100%'}}>
+        <FormControl fullWidth>
+            <InputLabel sx={{ backgroundColor:'#fff' }}>Tipo de Cambio</InputLabel>
+            <Select value={selected} onChange={ event => setSelected(event.target.value) }>
+                {changes.map( change => <MenuItem key={change.id} value={change.id}>{change.currency_from} por {change.currency_to}</MenuItem>)}
+            </Select>
+        </FormControl>
+        <Typography>{relationCurrency()}</Typography>
+        <TextField
+            variant="outlined"
+            type="number"
+            value={mount}
+            disabled={checked}
+            onChange={ev=>setMount(ev.target.value)}
+            InputProps={{
+                endAdornment: checked ? <Icon><Check sx={{color:'green'}} /></Icon> : <LoadingButton disabled={mount<=0} onClick={handlerCheck} loading={loading}>Check</LoadingButton>
+            }}
+        ></TextField>
+    </Stack>
+}
