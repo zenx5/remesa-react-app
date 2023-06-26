@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { LoadingButton } from '@mui/lab'
 import { Icon, Stack, FormControl, InputLabel, Select, MenuItem, Typography, TextField} from '@mui/material'
-import ChangeService from '../../services/Changes'
+import ChangeService from '../../services/ChangeService'
 import { useWizard } from './Context'
-import { Check } from '@mui/icons-material'
+import { Check, Close } from '@mui/icons-material'
 
 export default function StepOne() {
     const [loading, setloading] = useState(false)
+    const [avalaibility, setAvalaibility] = useState(null)
     const {changes, checked, selected, setSelected, mount, setMount, isAvalaible } = useWizard()
     
 
@@ -22,7 +23,9 @@ export default function StepOne() {
 
     const handlerCheck = async () => {
         setloading(true)
-        await isAvalaible()
+        const { currency_from, currency_to, price } = changes.find( change => change.id===selected ) ?? {}
+        console.log(currency_from, currency_to, price)
+        setAvalaibility( await isAvalaible(currency_from, currency_to, mount*price ) )
         setloading(false)
     }
 
@@ -38,10 +41,12 @@ export default function StepOne() {
             variant="outlined"
             type="number"
             value={mount}
-            disabled={checked}
+            disabled={avalaibility}
             onChange={ev=>setMount(ev.target.value)}
             InputProps={{
-                endAdornment: checked ? <Icon><Check sx={{color:'green'}} /></Icon> : <LoadingButton disabled={mount<=0} onClick={handlerCheck} loading={loading}>Check</LoadingButton>
+                endAdornment: avalaibility ? 
+                    <Icon><Check sx={{color:'green'}} /></Icon> : 
+                    <LoadingButton disabled={mount<=0} onClick={handlerCheck} loading={loading}>Check</LoadingButton>
             }}
         ></TextField>
     </Stack>
