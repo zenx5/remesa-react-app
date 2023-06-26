@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import ChangeService from "../../services/Changes";
+import ChangeService from "../../services/ChangeService";
+import CurrencyService from "../../services/CurrencyService";
 
 
 const ContextWizard = createContext()
@@ -14,12 +15,14 @@ function ProviderWizard({ children }) {
     const [mount, setMount] = useState(0)
     const [checked, setChecked] = useState(false)
     const [loading, setLoading] = useState(false)
+    const [loaded, setLoaded] = useState(false)
     const [selected, setSelected] = useState('')
 
     useEffect(()=>{
-        if(changes.length===0) {
+        if(changes.length===0 && !loaded) {
             (async ()=>{
                 await loadChanges()
+                setLoaded(true)
             })()
         }
     },[changes])
@@ -44,9 +47,12 @@ function ProviderWizard({ children }) {
         return prev<=1 ? 1 : prev - 1
      })
 
-    const isAvalaible = async () => {
-        await loadChanges2()
+    const isAvalaible = async (currency_from, currency_to, quantity ) => {
+        const currencies = await CurrencyService.get()
+        const { founds } = currencies.find( currency => currency.name===currency_to )
+        console.log( 'founds', founds, founds>quantity )
         setChecked(true)
+        return founds>quantity
     }
     
     return <ContextWizard.Provider value={{
