@@ -7,8 +7,7 @@ import { Check, Close } from '@mui/icons-material'
 
 export default function StepOne() {
     const [loading, setloading] = useState(false)
-    const [avalaibility, setAvalaibility] = useState(null)
-    const {changes, checked, selected, setSelected, mount, setMount, isAvalaible } = useWizard()
+    const {changes, avalaibility, checked, selected, setSelected, mount, setMount, isAvalaible } = useWizard()
     
 
     const relationCurrency = () => {
@@ -25,7 +24,7 @@ export default function StepOne() {
         setloading(true)
         const { currency_from, currency_to, price } = changes.find( change => change.id===selected ) ?? {}
         console.log(currency_from, currency_to, price)
-        setAvalaibility( await isAvalaible(currency_from, currency_to, mount*price ) )
+        await isAvalaible(currency_from, currency_to, mount*price )
         setloading(false)
     }
 
