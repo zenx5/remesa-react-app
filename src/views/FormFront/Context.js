@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import ChangeService from "../../services/ChangeService";
 import CurrencyService from "../../services/CurrencyService";
+import OperationService from "../../services/OperationService";
 
 
 const ContextWizard = createContext()
@@ -17,6 +18,8 @@ function ProviderWizard({ children }) {
     const [loading, setLoading] = useState(false)
     const [loaded, setLoaded] = useState(false)
     const [selected, setSelected] = useState('')
+    const [reference, setReference] = useState('')
+    const [avalaibility, setAvalaibility] = useState(null)
 
     useEffect(()=>{
         if(changes.length===0 && !loaded) {
@@ -40,7 +43,17 @@ function ProviderWizard({ children }) {
     }
 
     const next = () => setStep( prev => { 
-        return prev>=2 ? 2 : prev + 1
+        if( step === 2 ) {
+            const change = changes.find( change => change.id===selected )
+            console.log('mount', mount)
+            OperationService.set({
+                ...change,
+                id: reference,
+                verify: false,
+                mount,
+            })
+        }
+        return prev>=3 ? 3 : prev + 1
      })
 
     const back = () => setStep( prev => { 
@@ -52,13 +65,14 @@ function ProviderWizard({ children }) {
         const { founds } = currencies.find( currency => currency.name===currency_to )
         console.log( 'founds', founds, founds>quantity )
         setChecked(true)
-        return founds>quantity
+        setAvalaibility( founds>quantity )
     }
     
     return <ContextWizard.Provider value={{
         step,
         loading,
         checked,
+        avalaibility,
         isAvalaible,
         mount,
         setMount,
@@ -68,7 +82,9 @@ function ProviderWizard({ children }) {
         selected,
         setSelected,
         next,
-        back
+        back,
+        reference,
+        setReference
     }}>{children}</ContextWizard.Provider>
 }
 
