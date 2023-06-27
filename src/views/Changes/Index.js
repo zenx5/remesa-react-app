@@ -7,7 +7,7 @@ import { Add, Remove } from '@mui/icons-material'
 
 import { handlerChange } from '../../tools/Common'
 
-export default function Changes() {
+export default function Index() {
     const [ from, setFrom ] = useState('')
     const [ to, setTo ] = useState('')
     const [ price, setPrice ] = useState(1)
