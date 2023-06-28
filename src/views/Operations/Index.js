@@ -80,12 +80,12 @@ export default function Index() {
     }
 
     return <Card>
-        <CardHeader title="Operations" />
+        <CardHeader title="Operaciones" />
         <CardContent>
-            <Button onClick={clearAll}>Borrar</Button>
+            <Button variant='outlined' onClick={clearAll}>Borrar</Button>
             <List>{operations.map( operation => <span key={operation.id}>
                 <ListItem secondaryAction={<>
-                        <IconButton onClick={()=>handlerVerify(operation.id)}><Check sx={{ color: operation.verify ? 'green' : 'gray' }}/></IconButton>
+                        <IconButton onClick={()=>handlerVerify(operation.id)} disabled={operation.verify}><Check sx={{ color: operation.verify ? 'green' : 'gray' }}/></IconButton>
                         <IconButton onClick={handlerDelete}><Delete sx={{ color: 'red' }}/></IconButton>
                     </>}>
                     <ListItemText 

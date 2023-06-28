@@ -54,7 +54,7 @@ export default function Index() {
     }
 
     return  <Card>
-        <CardHeader title="Currencies" />
+        <CardHeader title="Monedas" />
         <CardContent>
             <Box sx={{display:'flex', flexDirecction:'row', gap:2, justifyContent:'center', mb:2}}>
                 <TextField size='small' value={name} onChange={handlerChange(setName)} label="Moneda" />
