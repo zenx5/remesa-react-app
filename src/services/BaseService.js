@@ -37,4 +37,14 @@ export default class BaseService {
         )
         return this.middleware('delete', response)
     }
+
+    static async wpaction(action, data){
+        const response = await Request(
+            process.env.REACT_APP_API_URL,
+            this.actions(action),
+            process.env.REACT_APP_WP_TOKEN,
+            data
+        )
+        return this.middleware(action, response)
+    }
 }
