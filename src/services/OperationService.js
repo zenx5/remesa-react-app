@@ -5,6 +5,7 @@ export default class OperationService extends BaseService {
         return ({
             get:'get_operations',
             set:'set_operation',
+            validate: 'validate_operation',
             delete:'remove_operation',
         })[ key ]
     }

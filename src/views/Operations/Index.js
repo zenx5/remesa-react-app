@@ -49,10 +49,7 @@ export default function Index() {
 
     const handlerVerify = async (id) => {
         setLoading(true)
-        await OperationService.set({
-            id,
-            verify:true
-        })
+        await OperationService.wpaction('validate',  { id })
         setLoading(false)
     }
 
