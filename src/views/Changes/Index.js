@@ -119,7 +119,7 @@ export default function Index() {
     }
 
     return <Card>
-        <CardHeader title="Currencies" />
+        <CardHeader title="Cambios" />
         <CardContent>
             <Box sx={{display:'flex', flexDirecction:'row', gap:2, justifyContent:'center', mb:2}}>
                 <Select 
