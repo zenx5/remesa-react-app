@@ -58,6 +58,24 @@ export default function Index() {
         await loadOperation()
     }
 
+    const calculatePrice = (price, rules = []) => {
+        let newPrice = price
+        rules.forEach( rule => {
+            const { value, deposit, value_format, relation } = rule
+
+            if( 
+                (relation===">" && deposit>price) ||
+                (relation===">=" && deposit>=price) ||
+                (relation==="<" && deposit<price) ||
+                (relation==="<=" && deposit<=price) ||
+                (relation==="==" && deposit===price)
+            ) {
+                newPrice = value_format ? newPrice - value : newPrice*(1-value)/100
+            }
+        })
+        return newPrice
+    }
+
     return <Card>
         <CardHeader title="Operaciones" />
         <CardContent>
@@ -71,7 +89,7 @@ export default function Index() {
                         primary={<Stack spacing={1}>
                             <Typography><b>Referencia:</b> {operation.id}</Typography>
                             <Typography><b>Monto Depositado:</b> {operation.mount} {operation.currency_from}</Typography>
-                            <Typography><b>Monto Esperado:</b> {operation.mount*operation.price} {operation.currency_to}</Typography>
+                            <Typography><b>Monto Esperado:</b> {operation.mount*calculatePrice(operation.price, operation.rules)} {operation.currency_to}</Typography>
                         </Stack>}
                     />
                 </ListItem>
