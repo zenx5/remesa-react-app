@@ -14,14 +14,18 @@ export default function Index() {
     useEffect(()=>{
         if( !loaded ) {
             (async ()=>{
-                setLoading(true)
-                const tempOperations = await OperationService.get()
-                setOperations( prev => tempOperations )
+                await loadOperation()
                 setLoaded(true)
-                setLoading(false)
             })()
         }
     },[loaded, operations])
+
+    const loadOperation = async () => {
+        setLoading(true)
+        const tempOperations = await OperationService.get()
+        setOperations( prev => tempOperations )
+        setLoading(false)
+    }
 
     const handlerDelete = (id) => async () => {
         if( window.confirm("Seguro de borrar?") ) {
@@ -51,6 +55,7 @@ export default function Index() {
         setLoading(true)
         await OperationService.wpaction('validate',  { id })
         setLoading(false)
+        await loadOperation()
     }
 
     return <Card>
