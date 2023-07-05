@@ -1,7 +1,7 @@
 import { Divider, List, Select, Button, Card, CardContent, CardHeader, Box, TextField, ListItem, ListItemText, Typography, MenuItem, IconButton, ButtonBase } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { LoadingButton } from '@mui/lab'
-import { Add, Remove } from '@mui/icons-material'
+import { Add, Edit, Remove } from '@mui/icons-material'
 
 import CurrencyService from '../../services/CurrencyService'
 import { handlerChange } from '../../tools/Common'
@@ -13,6 +13,7 @@ export default function Index() {
     const [founds, setFounds] = useState(0)
     const [loading, setLoading] = useState(false)
     const [loaded, setLoaded] = useState(false)
+    const [isEdit, setIsEdit] = useState(false)
 
     useEffect(()=>{
         (async()=>{
@@ -34,6 +35,7 @@ export default function Index() {
         setName('')
         setSymbol('')
         setFounds(0)
+        setIsEdit(false)
         setLoading(false)
     }
     
@@ -46,11 +48,18 @@ export default function Index() {
         setLoading(false)
     }
 
-    const removeCurrency = async (name) => {
+    const removeCurrency = async (selectedName) => {
         setLoading(true)
-        const result = await CurrencyService.delete({ name })
+        const result = await CurrencyService.delete({ name:selectedName })
         setCurrencies( result )
         setLoading(false)
+    }
+
+    const editCurrency = async (currency) => {
+        setIsEdit( true )
+        setName( prev => currency.name )
+        setSymbol( prev => currency.symbol )
+        setFounds( prev => currency.founds )
     }
 
     return  <Card>
@@ -66,8 +75,14 @@ export default function Index() {
             <Divider />
             <List>
                 { currencies.map( item => <span key={item.name}><ListItem
-                        secondaryAction={<IconButton onClick={()=>removeCurrency(item.name)}><Remove sx={{ color:'red'}} /></IconButton>}>
-                        <ListItemText primary={item.name} secondary={`${item.founds} ${item.symbol}`}></ListItemText>
+                        secondaryAction={<>
+                            <IconButton onClick={()=>editCurrency(item)}><Edit /></IconButton>
+                            <IconButton onClick={()=>removeCurrency(item.name)}><Remove sx={{ color:'red'}} /></IconButton>
+                        </>}>
+                        <ListItemText
+                            primary={item.name}
+                            secondary={`${item.founds} ${item.symbol}`}
+                        />
                     </ListItem>
                     <Divider />
                 </span> ) }
